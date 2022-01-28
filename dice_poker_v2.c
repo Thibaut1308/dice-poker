@@ -3,18 +3,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NB_TIRAGES 5
-#define NB_FACES 6
 #define NB_MAINS 5
+#define NB_FACES 6
+#define NB_TIRAGES_MAX 25
+
+
+/** Variable globale du nombre de tirages modifable en argument du programme*/
+int NB_TIRAGES =  5;
 
 typedef struct Joueur{
     char nom[50];
-    int mains[NB_MAINS][NB_TIRAGES];
+    int mains[NB_MAINS][NB_TIRAGES_MAX];
     int nextIndice;
     int scoreTotal;
 }Joueur;
 
-char *combinaisons[] = {"Rien", "Paire", "Deux paires", "Trois d'un coup", "Straight", "House",
+const char *combinaisons[] = {"Rien", "Paire", "Deux paires", "Trois d'un coup", "Straight", "House",
                                "Quatre d'un coup", "Full"};
 
 /** Déclaration des joueurs */
@@ -66,7 +70,7 @@ int verifierNupletIdentiques(int nuplet, const int tab[NB_FACES]) {
  *  0: Le tableau n'est pas une suite de chiffres consécutifs
  *  1: Le tableau est une suite de chiffres consécutifs
  */
-int estConsecutif(const int tab[NB_TIRAGES]) {
+int estConsecutif(const int tab[NB_TIRAGES_MAX]) {
 
     int minimum = tab[0];
     int i;
@@ -101,12 +105,11 @@ int estConsecutif(const int tab[NB_TIRAGES]) {
     }
 }
 
-int identifie(const int hand[NB_TIRAGES]) {
+int identifie(const int hand[NB_TIRAGES_MAX]) {
 
     /** On ignore l'indice zéro pour associé chaque indice à la valeur de la face du dé */
     int frequence[] = {0, 0, 0, 0, 0, 0, 0};
     int i;
-    int nb_frequence_zero = 0;
 
     /** Récupération des fréquences */
     for (i = 0; i < NB_TIRAGES; i++) {
@@ -156,8 +159,14 @@ int identifie(const int hand[NB_TIRAGES]) {
  * @name: Nom du joueur
  * @hand: Main du joueur
  */
-void affiche(char *name, int hand[NB_TIRAGES]) {
-    printf("%s: %d %d %d %d %d (%s)\n", name, hand[0], hand[1], hand[2], hand[3], hand[4], combinaisons[identifie(hand)]);
+void affiche(char *name, int hand[NB_TIRAGES_MAX]) {
+    int i;
+
+    printf("%s: ", name);
+    for(i=0;i<NB_TIRAGES;i++) {
+        printf("%d ", hand[i]);
+    }
+    printf("(%s)\n", combinaisons[identifie(hand)]);
 }
 
 int manche() {
