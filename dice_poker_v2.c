@@ -69,6 +69,12 @@ int estConsecutif(const int tab[NB_TIRAGES_MAX]) {
     }
 }
 
+/**
+ * identifie() - Fonction d'identification du type de main d'un joueur
+ * @hand: Main du joueur à analyser
+ * Return:
+ *      Tableau des fréquences de fréquence d'apparition des chiffres sur les dés
+ */
 int* identifie(const int hand[NB_TIRAGES_MAX]) {
 
     /** On ignore l'indice zéro pour associé chaque indice à la valeur de la face du dé */
@@ -114,6 +120,12 @@ void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
     printf(")");
 }
 
+/**
+ * calculerPoints() - Calcule les points d'une main
+ * @ffrequence: Tableau de fréquence des fréquences d'apparition des chiffres sur les dés
+ * Return:
+ *      Nombre de points d'une main d'après le tableau retourner par la fonction identifier.
+ */
 int calculerPoints(const int* ffrequence) {
     int i;
     int total = 0;
@@ -123,6 +135,13 @@ int calculerPoints(const int* ffrequence) {
     return total;
 }
 
+/**
+ * manche() - Fonction exécutant une manche de dice poker.
+ * Retourne:
+ *      -1: Victoire de l'ordinateur
+ *       0: Egalité
+ *       1: Victoire du joueur
+ */
 int manche() {
 
     int i;
