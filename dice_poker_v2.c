@@ -165,17 +165,18 @@ int manche() {
         for (i = 0; i < NB_TIRAGES; i++) {
             scanf("%d", &relance[i]);
         }
-    }
 
-    /** Relance des dés choisis */
-    for(i=0;i<NB_TIRAGES;i++) {
-        if(relance[i] == 1) {
-            joueur->mains[joueur->nextIndice][i] = rand() % 6 + 1;
+        /** Relance des dés choisis */
+        for(i=0;i<NB_TIRAGES;i++) {
+            if(relance[i] == 1) {
+                joueur->mains[joueur->nextIndice][i] = rand() % 6 + 1;
+            }
         }
+        printf("\nNouvelle main:");
+        /** Affichage de la nouvelle main */
+        affiche(joueur->nom, joueur->mains[joueur->nextIndice]);
     }
 
-    /** Affichage de la nouvelle main */
-    affiche(joueur->nom, joueur->mains[joueur->nextIndice]);
 
     /**  Calcul des points et détermination du gagnant */
     int pointsJoueur = calculerPoints(identifie(joueur->mains[joueur->nextIndice]));
