@@ -16,7 +16,6 @@ typedef struct Joueur{
     char nom[50];
     int mains[NB_MAINS][NB_TIRAGES_MAX];
     int nextIndice;
-    int scoreTotal;
 }Joueur;
 
 const char *combinaisons[] = {"Rien", "Paire", "Triple", "Carre", "Penta", "Hexa", "Septa", "Octa",
@@ -178,10 +177,6 @@ int manche() {
     joueur->nextIndice++;
     ordinateur->nextIndice++;
 
-    /** Mise à jour du score total */
-    joueur->scoreTotal += pointsJoueur;
-    ordinateur->scoreTotal += pointsOrdinateur;
-
     printf("\n");
 
     if(pointsJoueur < pointsOrdinateur) {
@@ -217,25 +212,24 @@ int main(int argc, char *argv[]) {
     ordinateur = malloc(sizeof (Joueur));
     joueur->nextIndice = 0;
     ordinateur->nextIndice = 0;
-    joueur->scoreTotal = 0;
-    ordinateur->scoreTotal = 0;
     strcpy(joueur->nom, "Joueur");
     strcpy(ordinateur->nom, "Ordinateur");
+
+    int scoreTotal = 0;
 
     /** Jeu */
     srand(time(NULL));
     for(i=0; i<NB_MAINS; i++) {
-        manche();
+        scoreTotal += manche();
     }
 
-    printf("\nPoints %s: %d\n", ordinateur->nom, ordinateur->scoreTotal);
-    printf("Points %s: %d\n", joueur->nom, joueur->scoreTotal);
+    printf("Points totaux: %s", scoreTotal);
 
 
-    if(joueur->scoreTotal < ordinateur->scoreTotal) {
+    if(scoreTotal < 0) {
         printf("Victoire de l'ordinateur\n\n");
     }else{
-        if(joueur->scoreTotal > ordinateur->scoreTotal) {
+        if(scoreTotal > 0) {
             printf("Vous avez gagne !\n\n");
         }else{
             printf("Egalite\n\n");
