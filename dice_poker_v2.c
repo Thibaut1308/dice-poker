@@ -154,9 +154,17 @@ int manche() {
 
     /** Choix de relance des dés */
     int relance[NB_TIRAGES];
-    printf("\nQue voulez-vous faire ? (Entrez une serie de chiffre 0 ou 1 avec 1 les chiffres a rejouer)\n");
-    for(i=0;i<NB_TIRAGES;i++){
-        scanf("%d", &relance[i]);
+    char rep = ' ';
+    while (rep != 'O' && rep != 'N' && rep != 'o' && rep != 'n') {
+        printf("\nRelancer ? (O/N)\n");
+        scanf("%c", &rep);
+    }
+
+    if (rep == 'O' || rep == 'o') {
+        printf("\nQue voulez-vous faire ? (Entrez une serie de chiffre 0 ou 1 avec 1 les chiffres a rejouer)\n");
+        for (i = 0; i < NB_TIRAGES; i++) {
+            scanf("%d", &relance[i]);
+        }
     }
 
     /** Relance des dés choisis */
@@ -180,11 +188,14 @@ int manche() {
     printf("\n");
 
     if(pointsJoueur < pointsOrdinateur) {
+        printf("Manche remportee par l'ordinateur\n");
         return -1;
     }else{
         if(pointsJoueur > pointsOrdinateur) {
+            printf("Manche remportee par le joueur\n");
             return 1;
         }else{
+            printf("Manche nulle\n");
             return 0;
         }
     }
@@ -223,7 +234,7 @@ int main(int argc, char *argv[]) {
         scoreTotal += manche();
     }
 
-    printf("Points totaux: %s", scoreTotal);
+    printf("Points totaux: %d\n\n", scoreTotal);
 
 
     if(scoreTotal < 0) {
