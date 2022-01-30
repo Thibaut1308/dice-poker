@@ -18,6 +18,17 @@ typedef struct Joueur{
     int nextIndice;
 }Joueur;
 
+typedef struct ListeFaces{
+    int faces[NB_FACES+1];
+    int indiceDernierElement;
+}ListeFaces;
+
+typedef struct Identification{
+    int ffrequence;
+    ListeFaces lfaces;
+}Identification;
+
+
 const char *combinaisons[] = {"Rien", "Paire", "Triple", "Carre", "Penta", "Hexa", "Septa", "Octa",
                                "Nona", "Deca", "Hendeca", "Dodeca"};
 
@@ -74,11 +85,13 @@ int estConsecutif(const int tab[NB_TIRAGES_MAX]) {
  * Return:
  *      Tableau des fréquences de fréquence d'apparition des chiffres sur les dés
  */
-int* identifie(const int hand[NB_TIRAGES_MAX]) {
+Identification* identifie(const int hand[NB_TIRAGES_MAX]) {
 
     /** On ignore l'indice zéro pour associé chaque indice à la valeur de la face du dé */
     int frequence[] = {0, 0, 0, 0, 0, 0, 0};
     static int ffrequence[NB_TIRAGES_MAX];
+    Identification *id = NULL;
+    id = malloc(NB_TIRAGES_MAX * (sizeof (Identification)));
     int i;
 
     /** Récupération des fréquences */
@@ -88,12 +101,20 @@ int* identifie(const int hand[NB_TIRAGES_MAX]) {
 
     /** Récupération des fréquences de fréquence */
     for(i = 0;i < NB_TIRAGES + 1; i++) {
-        ffrequence[i] = 0;
+        /** Initialisation des fréquences de fréquences*/
+        //ffrequence[i] = 0;
+        id[i].ffrequence = 0;
+        id[i].lfaces.indiceDernierElement = 0;
     }
+
     for(i = 1;i < NB_FACES + 1; i++) {
-        ffrequence[frequence[i]]++;
+        //ffrequence[frequence[i]]++;
+        id[frequence[i]].ffrequence++;
+        id[frequence[i]].lfaces.faces[id[frequence[i]].lfaces.indiceDernierElement] = i;
+        id[frequence[i]].lfaces.indiceDernierElement++;
     }
-    return ffrequence;
+
+    return id;
 }
 
 /**
@@ -103,15 +124,18 @@ int* identifie(const int hand[NB_TIRAGES_MAX]) {
  */
 void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
     int i;
+    Identification *id;
 
     printf("\n%s: ", name);
     for(i=0;i<NB_TIRAGES;i++) {
         printf("%d ", hand[i]);
     }
     printf("( ");
-    int* ffrequence = identifie(hand);
+    //int* ffrequence = identifie(hand);
+    id = identifie(hand);
     for(i=2;i<NB_TIRAGES;i++){
-        int nombre = ffrequence[i];
+        //int nombre = ffrequence[i];
+        int nombre = id[i].ffrequence;
         if(nombre != 0) {
             printf("%d %s ", nombre, combinaisons[i-1]);
         }
@@ -125,13 +149,27 @@ void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
  * Return:
  *      Nombre de points d'une main d'après le tableau retourner par la fonction identifier.
  */
-int calculerPoints(const int* ffrequence) {
+int calculerPoints(const Identification* idJoueur, const Identification* idOrdinateur) {
     int i;
-    int total = 0;
+    int totalJoueur = 0;
+    int totalOrdinateur = 0;
     for(i=2; i<NB_TIRAGES; i++) {
-        total += (int)(ffrequence[i]*pow(2, i));
+        totalJoueur += (int)(idJoueur[i].ffrequence*pow(2, i));
+        totalOrdinateur += (int)(idOrdinateur[i].ffrequence*pow(2, i));
     }
-    return total;
+
+    if(totalJoueur < totalOrdinateur) {
+        printf("Manche remportee par l'ordinateur\n");
+        return -1;
+    }else{
+        if(totalJoueur > totalOrdinateur) {
+            printf("Manche remportee par le joueur\n");
+            return 1;
+        }else{
+            printf("Manche nulle\n");
+            return 0;
+        }
+    }
 }
 
 /**
@@ -179,8 +217,7 @@ int manche() {
 
 
     /**  Calcul des points et détermination du gagnant */
-    int pointsJoueur = calculerPoints(identifie(joueur->mains[joueur->nextIndice]));
-    int pointsOrdinateur = calculerPoints(identifie(ordinateur->mains[joueur->nextIndice]));
+    int calculGagnant = calculerPoints(identifie(joueur->mains[joueur->nextIndice]), identifie(ordinateur->mains[joueur->nextIndice]));
 
     /** Incrémentation de l'indice des mains du joueur */
     joueur->nextIndice++;
@@ -188,18 +225,7 @@ int manche() {
 
     printf("\n");
 
-    if(pointsJoueur < pointsOrdinateur) {
-        printf("Manche remportee par l'ordinateur\n");
-        return -1;
-    }else{
-        if(pointsJoueur > pointsOrdinateur) {
-            printf("Manche remportee par le joueur\n");
-            return 1;
-        }else{
-            printf("Manche nulle\n");
-            return 0;
-        }
-    }
+    return calculGagnant;
 }
 
 /**
