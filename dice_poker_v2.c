@@ -4,12 +4,6 @@
 #include <string.h>
 #include <math.h>
 
-#ifdef _WIN32
-#include <Windows.h>
-#else
-#include <unistd.h>
-#endif
-
 #define NB_MAINS 5
 #define NB_FACES 6
 #define NB_TIRAGES_MAX 12
