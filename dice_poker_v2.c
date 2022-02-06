@@ -4,13 +4,18 @@
 #include <string.h>
 #include <math.h>
 
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
 #define NB_MAINS 5
 #define NB_FACES 6
 #define NB_TIRAGES_MAX 12
 
-
 /** Variable globale du nombre de tirages modifable en argument du programme*/
-int NB_TIRAGES =  7;
+int NB_TIRAGES =  5;
 
 typedef struct Joueur{
     char nom[50];
@@ -42,14 +47,16 @@ Joueur *ordinateur;
  * @tab: Tableau dans lequel rechercher la suite consécutif
  * Return:
  *  0: Le tableau n'est pas une suite de chiffres consécutifs
- *  1: Le tableau est une suite de chiffres consécutifs
+ *  1: Le tableau est une suite de chiffres consécutifs de 1 à 5 (Five Straight)
+ *  2: Le tableau est une suite de chiffres consécutifs de 2 à 6 (Six Straight)
  */
 int estConsecutif(const int tab[NB_TIRAGES_MAX]) {
 
     int minimum = tab[0];
+    int nb_consecutif = 5;
     int i;
 
-    for(i=1;i<NB_TIRAGES;i++) {
+    for(i=1;i<nb_consecutif;i++) {
         if(tab[i] < minimum) {
             minimum = tab[i];
         }
@@ -59,8 +66,8 @@ int estConsecutif(const int tab[NB_TIRAGES_MAX]) {
     int taille = 1;
     int precedentMin = minimum;
 
-    while(taille != NB_TIRAGES && !fin) {
-        for(i=0;i<NB_TIRAGES;i++) {
+    while(taille != nb_consecutif && !fin) {
+        for(i=0;i<nb_consecutif;i++) {
             if(tab[i] == minimum+1) {
                 minimum++;
                 taille++;
@@ -72,8 +79,12 @@ int estConsecutif(const int tab[NB_TIRAGES_MAX]) {
             precedentMin = minimum;
         }
     }
-    if(taille == NB_TIRAGES) {
-        return 1;
+    if(taille == nb_consecutif) {
+        if(minimum == 6) {
+            return 2; // Six Straight
+        }else{
+            return 1; // Five Straight
+        }
     }else{
         return 0;
     }
@@ -89,7 +100,6 @@ Identification* identifie(const int hand[NB_TIRAGES_MAX]) {
 
     /** On ignore l'indice zéro pour associé chaque indice à la valeur de la face du dé */
     int frequence[] = {0, 0, 0, 0, 0, 0, 0};
-    static int ffrequence[NB_TIRAGES_MAX];
     Identification *id = NULL;
     id = malloc(NB_TIRAGES_MAX * (sizeof (Identification)));
     int i;
@@ -102,13 +112,11 @@ Identification* identifie(const int hand[NB_TIRAGES_MAX]) {
     /** Récupération des fréquences de fréquence */
     for(i = 0;i < NB_TIRAGES + 1; i++) {
         /** Initialisation des fréquences de fréquences*/
-        //ffrequence[i] = 0;
         id[i].ffrequence = 0;
         id[i].lfaces.indiceDernierElement = 0;
     }
 
     for(i = 1;i < NB_FACES + 1; i++) {
-        //ffrequence[frequence[i]]++;
         id[frequence[i]].ffrequence++;
         id[frequence[i]].lfaces.faces[id[frequence[i]].lfaces.indiceDernierElement] = i;
         id[frequence[i]].lfaces.indiceDernierElement++;
@@ -131,14 +139,30 @@ void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
         printf("%d ", hand[i]);
     }
     printf("( ");
-    //int* ffrequence = identifie(hand);
     id = identifie(hand);
     for(i=2;i<NB_TIRAGES;i++){
-        //int nombre = ffrequence[i];
         int nombre = id[i].ffrequence;
         if(nombre != 0) {
+            if(i == NB_TIRAGES-1) {
+                printf("%s ", "Full !" );
+            }
             printf("%d %s ", nombre, combinaisons[i-1]);
+            //TODO Cas du "rien"
+            //TODO Pour les manches à 5 dés cas des Straight, House ...
         }
+    }
+
+    // Cas d'un straight
+    int straight = estConsecutif(hand);
+    switch(straight) {
+        case 1:
+            printf("%s", "Five Straight");
+            break;
+        case 2:
+            printf("%s ", "Six Straight");
+            break;
+        default:
+            break;
     }
     printf(")");
 }
@@ -159,14 +183,29 @@ int calculerPoints(const Identification* idJoueur, const Identification* idOrdin
     }
 
     if(totalJoueur < totalOrdinateur) {
-        printf("Manche remportee par l'ordinateur\n");
         return -1;
     }else{
         if(totalJoueur > totalOrdinateur) {
-            printf("Manche remportee par le joueur\n");
             return 1;
         }else{
-            printf("Manche nulle\n");
+            // Parcours dans le sens inverse pour prendre d'abord en compte les N-d'un coup les plus grands.
+            for(i=NB_TIRAGES-1; i>=2; i--){
+                // Si le joueur et l'ordinateur ont le même N-d'un coup.
+                if(idJoueur[i].ffrequence != 0 && idOrdinateur[i].ffrequence != 0) {
+                    // Addition de toutes les faces, le gagnant est la somme la plus grande.
+                    int sommeFacesJoueur = 0;
+                    int sommeFacesOrdinateur = 0;
+                    int j = 0;
+                    for(j=0; j<idJoueur[i].lfaces.indiceDernierElement; j++) {
+                        sommeFacesJoueur += idJoueur[i].lfaces.faces[j];
+                    }
+                    for(j=0; j<idOrdinateur[i].lfaces.indiceDernierElement; j++) {
+                        sommeFacesOrdinateur += idOrdinateur[i].lfaces.faces[j];
+                    }
+                    if(sommeFacesOrdinateur > sommeFacesJoueur) return -1;
+                    if(sommeFacesJoueur > sommeFacesOrdinateur) return 1;
+                }
+            }
             return 0;
         }
     }
@@ -195,13 +234,13 @@ int manche() {
     char rep = ' ';
     while (rep != 'O' && rep != 'N' && rep != 'o' && rep != 'n') {
         printf("\nRelancer ? (O/N)\n");
-        scanf("%c", &rep);
+        scanf(" %c", &rep);
     }
 
     if (rep == 'O' || rep == 'o') {
         printf("\nQue voulez-vous faire ? (Entrez une serie de chiffre 0 ou 1 avec 1 les chiffres a rejouer)\n");
         for (i = 0; i < NB_TIRAGES; i++) {
-            scanf("%d", &relance[i]);
+            scanf(" %d", &relance[i]);
         }
 
         /** Relance des dés choisis */
@@ -211,6 +250,7 @@ int manche() {
             }
         }
         printf("\nNouvelle main:");
+
         /** Affichage de la nouvelle main */
         affiche(joueur->nom, joueur->mains[joueur->nextIndice]);
     }
@@ -218,6 +258,19 @@ int manche() {
 
     /**  Calcul des points et détermination du gagnant */
     int calculGagnant = calculerPoints(identifie(joueur->mains[joueur->nextIndice]), identifie(ordinateur->mains[joueur->nextIndice]));
+
+    switch (calculGagnant) {
+        case 1:
+            printf("\nVous avez gagne !\n");
+            break;
+        case -1:
+            printf("\nVictoire de l'ordinateur.\n");
+            break;
+        default:
+            printf("\nEgalite\n");
+            break;
+    }
+
 
     /** Incrémentation de l'indice des mains du joueur */
     joueur->nextIndice++;
