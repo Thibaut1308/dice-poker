@@ -60,7 +60,7 @@ int estConsecutif(const int tab[NB_TIRAGES_MAX]) {
  * identifie() - Fonction d'identification du type de main d'un joueur
  * @hand: Main du joueur à analyser
  * Return:
- *      Tableau des fréquences de fréquence d'apparition des chiffres sur les dés
+ *      Pointeur sur une structure identification créée
  */
 Identification* identifie(const int hand[NB_TIRAGES_MAX]) {
 
@@ -136,9 +136,13 @@ void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
 
 /**
  * calculerPoints() - Calcule les points d'une main
- * @ffrequence: Tableau de fréquence des fréquences d'apparition des chiffres sur les dés
+ * @idJoueur: structure d'indentification de la main du joueur
+ * @idOrdinateur: structure d'identification de la main de l'ordinateur
  * Return:
- *      Nombre de points d'une main d'après le tableau retourner par la fonction identifier.
+ *      Calcule les points et renvoie le gagnant (nécessaire pour la comparaison des faces dans les égalités)
+ *      -1: Victoire de l'ordinateur
+ *       0: Egalité
+ *       1: Victoire du joueur
  */
 int calculerPoints(const Identification* idJoueur, const Identification* idOrdinateur) {
     int i;
