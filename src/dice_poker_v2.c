@@ -4,36 +4,8 @@
 #include <string.h>
 #include <math.h>
 
-#define NB_MAINS 5
-#define NB_FACES 6
-#define NB_TIRAGES_MAX 12
-
-/** Variable globale du nombre de tirages modifable en argument du programme*/
-int NB_TIRAGES =  5;
-
-typedef struct Joueur{
-    char nom[50];
-    int mains[NB_MAINS][NB_TIRAGES_MAX];
-    int nextIndice;
-}Joueur;
-
-typedef struct ListeFaces{
-    int faces[NB_FACES+1];
-    int indiceDernierElement;
-}ListeFaces;
-
-typedef struct Identification{
-    int ffrequence;
-    ListeFaces lfaces;
-}Identification;
-
-
-const char *combinaisons[] = {"Rien", "Paire", "Triple", "Carre", "Penta", "Hexa", "Septa", "Octa",
-                               "Nona", "Deca", "Hendeca", "Dodeca"};
-
-/** Déclaration des joueurs */
-Joueur *joueur;
-Joueur *ordinateur;
+#include "include/dice_poker_v2.h"
+#include "include/declarations.h"
 
 
 /**
@@ -141,6 +113,7 @@ void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
                 printf("%s ", "Full !" );
             }
             printf("%d %s ", nombre, combinaisons[i-1]);
+
             //TODO Cas du "rien"
             //TODO Pour les manches à 5 dés cas des Straight, House ...
         }
