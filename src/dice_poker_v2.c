@@ -7,14 +7,14 @@
 #include "include/dice_poker_v2.h"
 #include "include/declarations.h"
 
-
+// TODO Affichage des houses et évaluation des straight
 /**
  * estConsecutif() - Vérifie si tous les chiffres du tableau sont consécutifs
  * @tab: Tableau dans lequel rechercher la suite consécutif
  * Return:
- *  0: Le tableau n'est pas une suite de chiffres consécutifs
- *  1: Le tableau est une suite de chiffres consécutifs de 1 à 5 (Five Straight)
- *  2: Le tableau est une suite de chiffres consécutifs de 2 à 6 (Six Straight)
+ *      0: Le tableau n'est pas une suite de chiffres consécutifs
+ *      1: Le tableau est une suite de chiffres consécutifs de 1 à 5 (Five Straight)
+ *      2: Le tableau est une suite de chiffres consécutifs de 2 à 6 (Six Straight)
  */
 int estConsecutif(const int tab[NB_TIRAGES_MAX]) {
 
@@ -99,6 +99,7 @@ Identification* identifie(const int hand[NB_TIRAGES_MAX]) {
 void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
     int i;
     Identification *id;
+    int rien = 1;
 
     printf("\n%s: ", name);
     for(i=0;i<NB_TIRAGES;i++) {
@@ -109,13 +110,12 @@ void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
     for(i=2;i<NB_TIRAGES;i++){
         int nombre = id[i].ffrequence;
         if(nombre != 0) {
+            rien = 0;
             if(i == NB_TIRAGES-1) {
                 printf("%s ", "Full !" );
+            }else{
+                printf("%d %s ", nombre, combinaisons[i-1]);
             }
-            printf("%d %s ", nombre, combinaisons[i-1]);
-
-            //TODO Cas du "rien"
-            //TODO Pour les manches à 5 dés cas des Straight, House ...
         }
     }
 
@@ -123,14 +123,19 @@ void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
     int straight = estConsecutif(hand);
     switch(straight) {
         case 1:
+            rien = 0;
             printf("%s", "Five Straight");
             break;
         case 2:
+            rien = 0;
             printf("%s ", "Six Straight");
             break;
         default:
             break;
     }
+
+    //TODO Pour les manches à 5 dés cas des  House ...
+    if(rien) printf("%s ", "Rien");
     printf(")");
 }
 
@@ -184,7 +189,7 @@ int calculerPoints(const Identification* idJoueur, const Identification* idOrdin
 
 /**
  * manche() - Fonction exécutant une manche de dice poker.
- * Retourne:
+ * Return:
  *      -1: Victoire de l'ordinateur
  *       0: Egalité
  *       1: Victoire du joueur
