@@ -7,7 +7,7 @@
 #include "include/dice_poker_v2.h"
 #include "include/declarations.h"
 
-// TODO Affichage des houses et évaluation des straight
+// TODO Evaluation des straight
 /**
  * estConsecutif() - Vérifie si tous les chiffres du tableau sont consécutifs
  * @tab: Tableau dans lequel rechercher la suite consécutif
@@ -135,7 +135,9 @@ void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
     }
 
     //TODO Pour les manches à 5 dés cas des  House ...
-    if(rien) printf("%s ", "Rien");
+    if(rien) {
+        printf("%s ", "Rien");
+    }
     printf(")");
 }
 
@@ -198,12 +200,12 @@ int manche() {
 
     int i;
     for (i = 0; i < NB_TIRAGES; i++) {
-        joueur->mains[joueur->nextIndice][i] = rand() % 6 + 1;
-        ordinateur->mains[ordinateur->nextIndice][i] = rand() % 6 + 1;
+        joueur->mains[joueur->nextIndiceMains][i] = rand() % 6 + 1;
+        ordinateur->mains[ordinateur->nextIndiceMains][i] = rand() % 6 + 1;
     }
 
-    affiche(ordinateur->nom, ordinateur->mains[joueur->nextIndice]);
-    affiche(joueur->nom, joueur->mains[joueur->nextIndice]);
+    affiche(ordinateur->nom, ordinateur->mains[joueur->nextIndiceMains]);
+    affiche(joueur->nom, joueur->mains[joueur->nextIndiceMains]);
 
     /** Choix de relance des dés */
     int relance[NB_TIRAGES];
@@ -222,18 +224,18 @@ int manche() {
         /** Relance des dés choisis */
         for(i=0;i<NB_TIRAGES;i++) {
             if(relance[i] == 1) {
-                joueur->mains[joueur->nextIndice][i] = rand() % 6 + 1;
+                joueur->mains[joueur->nextIndiceMains][i] = rand() % 6 + 1;
             }
         }
         printf("\nNouvelle main:");
 
         /** Affichage de la nouvelle main */
-        affiche(joueur->nom, joueur->mains[joueur->nextIndice]);
+        affiche(joueur->nom, joueur->mains[joueur->nextIndiceMains]);
     }
 
 
     /**  Calcul des points et détermination du gagnant */
-    int calculGagnant = calculerPoints(identifie(joueur->mains[joueur->nextIndice]), identifie(ordinateur->mains[joueur->nextIndice]));
+    int calculGagnant = calculerPoints(identifie(joueur->mains[joueur->nextIndiceMains]), identifie(ordinateur->mains[joueur->nextIndiceMains]));
 
     switch (calculGagnant) {
         case 1:
@@ -249,8 +251,8 @@ int manche() {
 
 
     /** Incrémentation de l'indice des mains du joueur */
-    joueur->nextIndice++;
-    ordinateur->nextIndice++;
+    joueur->nextIndiceMains++;
+    ordinateur->nextIndiceMains++;
 
     printf("\n");
 
@@ -277,8 +279,8 @@ int main(int argc, char *argv[]) {
     /** Initialisation des joueurs  */
     joueur = malloc(sizeof (Joueur));
     ordinateur = malloc(sizeof (Joueur));
-    joueur->nextIndice = 0;
-    ordinateur->nextIndice = 0;
+    joueur->nextIndiceMains = 0;
+    ordinateur->nextIndiceMains = 0;
     strcpy(joueur->nom, "Joueur");
     strcpy(ordinateur->nom, "Ordinateur");
 

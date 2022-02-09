@@ -10,7 +10,7 @@
 typedef struct Joueur{
     char nom[50];
     int mains[NB_MAINS][NB_TIRAGES_MAX];
-    int nextIndice;
+    int nextIndiceMains;
 }Joueur;
 
 typedef struct ListeFaces{

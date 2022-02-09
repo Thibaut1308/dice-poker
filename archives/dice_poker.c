@@ -10,7 +10,7 @@
 typedef struct Joueur{
     char nom[50];
     int mains[NB_MAINS][NB_TIRAGES];
-    int nextIndice;
+    int nextIndiceMains;
     int scoreTotal;
 }Joueur;
 
@@ -164,20 +164,20 @@ int manche() {
 
     int i;
     for (i = 0; i < NB_TIRAGES; i++) {
-        joueur->mains[joueur->nextIndice][i] = rand() % 6 + 1;
-        ordinateur->mains[ordinateur->nextIndice][i] = rand() % 6 + 1;
+        joueur->mains[joueur->nextIndiceMains][i] = rand() % 6 + 1;
+        ordinateur->mains[ordinateur->nextIndiceMains][i] = rand() % 6 + 1;
     }
 
-    affiche(ordinateur->nom, ordinateur->mains[joueur->nextIndice]);
-    affiche(joueur->nom, joueur->mains[joueur->nextIndice]);
+    affiche(ordinateur->nom, ordinateur->mains[joueur->nextIndiceMains]);
+    affiche(joueur->nom, joueur->mains[joueur->nextIndiceMains]);
 
     /**  Calcul des points et détermination du gagnant */
-    int pointsJoueur = identifie(joueur->mains[joueur->nextIndice]);
-    int pointsOrdinateur = identifie(ordinateur->mains[joueur->nextIndice]);
+    int pointsJoueur = identifie(joueur->mains[joueur->nextIndiceMains]);
+    int pointsOrdinateur = identifie(ordinateur->mains[joueur->nextIndiceMains]);
 
     /** Incrémentation de l'indice des mains du joueur */
-    joueur->nextIndice++;
-    ordinateur->nextIndice++;
+    joueur->nextIndiceMains++;
+    ordinateur->nextIndiceMains++;
 
     /** Mise à jour du score total */
     joueur->scoreTotal += pointsJoueur;
@@ -212,8 +212,8 @@ int main() {
     /** Initialisation des joueurs  */
     joueur = malloc(sizeof (Joueur));
     ordinateur = malloc(sizeof (Joueur));
-    joueur->nextIndice = 0;
-    ordinateur->nextIndice = 0;
+    joueur->nextIndiceMains = 0;
+    ordinateur->nextIndiceMains = 0;
     joueur->scoreTotal = 0;
     ordinateur->scoreTotal = 0;
     strcpy(joueur->nom, "Joueur");
