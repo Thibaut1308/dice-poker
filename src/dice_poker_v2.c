@@ -124,7 +124,7 @@ void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
     switch(straight) {
         case 1:
             rien = 0;
-            printf("%s", "Five Straight");
+            printf("%s ", "Five Straight");
             break;
         case 2:
             rien = 0;
