@@ -236,12 +236,29 @@ int manche() {
     }
 
 
+
     /**  Calcul des points et détermination du gagnant */
     int calculGagnant = calculerPoints(identifie(joueur->mains[joueur->nextIndiceMains]), identifie(ordinateur->mains[joueur->nextIndiceMains]));
 
     if(calculGagnant == 1) {
         //TODO IA pour faire rejouer l'ordinateur
+        printf("\nL'ordinateur rejoue les des suivants: ");
+        int *desARejouer = rejoue(ordinateur->mains[ordinateur->nextIndiceMains], NB_TIRAGES);
+        afficherMainARejouer(desARejouer, NB_TIRAGES);
 
+        /** Relance des dés choisis */
+        for(i=0;i<NB_TIRAGES;i++) {
+            if(desARejouer[i] == 1) {
+                ordinateur->mains[ordinateur->nextIndiceMains][i] = rand() % 6 + 1;
+            }
+        }
+        printf("\nNouvelle main:");
+
+        /** Affichage de la nouvelle main */
+        affiche(ordinateur->nom, ordinateur->mains[ordinateur->nextIndiceMains]);
+
+        /**  Recalcul des points et détermination du gagnant */
+        calculGagnant = calculerPoints(identifie(joueur->mains[joueur->nextIndiceMains]), identifie(ordinateur->mains[joueur->nextIndiceMains]));
     }
 
     switch (calculGagnant) {
@@ -293,6 +310,7 @@ int main(int argc, char *argv[]) {
 
     int scoreTotal = 0;
 
+    /** Demande au joueur de choisir la stratégie utilisée par l'ordinateur */
     choisirStrategie();
 
     /** Jeu */

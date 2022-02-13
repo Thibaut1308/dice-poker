@@ -1,6 +1,8 @@
 #ifndef DICE_POKER_IA_H
 #define DICE_POKER_IA_H
 
+
+#include "dice_poker_v2.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -32,8 +34,52 @@ void choisirStrategie() {
     }
 }
 
+//TODO Rejouer IA en prenant en compte la main du joueur.
+//TODO en prenant en compte les faces
+//TODO en prenant en compte les straight
+/**
+ * rejouerIA() - Rejoue les dés non compris dans des paires , triples ...
+ * @hand_size Taille de la main à rejouer
+ * Return:
+ *      retour: Tableau des dés à rejouer de taille @hand_size
+ */
 int *rejouerIA(int *hand, int hand_size) {
-    return NULL;
+    Identification* id;
+    id = identifie(hand);
+    int i;
+    int j;
+    int ffrequence;
+    int facesPresentes[NB_FACES];
+    int indiceFacesPresentes = 0;
+
+    for(i=2;i<NB_TIRAGES;i++){
+        ffrequence = id[i].ffrequence;
+        if(ffrequence != 0){
+            for(j=0; j<id[i].lfaces.indiceDernierElement; j++) {
+                facesPresentes[indiceFacesPresentes] = id[i].lfaces.faces[j];
+                indiceFacesPresentes++;
+            }
+        }
+    }
+
+    int *retour;
+    retour = malloc(sizeof (int) * hand_size);
+
+    // On set les dés à rejouer à 1
+    for(i=0; i<hand_size; i++) {
+        retour[i] = 1;
+    }
+
+    // On retire ceux dont les faces sont présentes dans facesPrésentes
+    for(i=0; i<hand_size; i++) {
+        for(j=0; j<NB_FACES; j++) {
+            if(facesPresentes[j] == hand[i]) {
+                retour[i] = 0;
+            }
+        }
+    }
+
+    return retour;
 }
 
 /**
@@ -94,14 +140,14 @@ int *rejouerAlea(int hand_size) {
     return retour;
 }
 
-void afficherMainARejouer(int *hand, int hand_size) {
+void afficherMainARejouer(int *desARejouer, int hand_size) {
     printf("\n[ ");
     int i;
     for(i=0; i<hand_size; i++) {
         if(i==0) {
-            printf("%d", hand[i]);
+            printf("%d", desARejouer[i]);
         }else{
-            printf(", %d", hand[i]);
+            printf(", %d", desARejouer[i]);
         }
     }
     printf(" ]\n");
