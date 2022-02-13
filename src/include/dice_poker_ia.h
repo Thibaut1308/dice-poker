@@ -14,7 +14,7 @@ typedef enum {
     TOUT_REJOUER = 1,
     REJOUER_UN_DE_SUR_DEUX = 2,
     REJOUER_ALEA = 3,
-    REJOUER_INTELLIGENT = 4
+    REJOUER_IA = 4
 } Strategie;
 
 
@@ -28,7 +28,7 @@ void choisirStrategie() {
         printf(" 3: Rejouer Alea\n");
         printf(" 4: IA\n");
         scanf(" %c", &rep);
-        strategie = (int)rep;
+        strategie = (int)rep - (int)'0';
     }
 }
 
@@ -120,8 +120,10 @@ int *rejoue(int *hand, int hand_size) {
             return rejouerUnDeSurDeux(hand_size);
         case REJOUER_ALEA:
             return rejouerAlea(hand_size);
-        default:
+        case REJOUER_IA:
             return rejouerIA(hand, hand_size);
+        default:
+            return (int *)EXIT_FAILURE;
     }
 }
 
