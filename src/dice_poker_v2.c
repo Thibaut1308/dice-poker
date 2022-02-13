@@ -6,6 +6,7 @@
 
 #include "include/dice_poker_v2.h"
 #include "include/declarations.h"
+#include "include/dice_poker_ia.h"
 
 // TODO Evaluation des straight
 /**
@@ -138,7 +139,7 @@ void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
     if(rien) {
         printf("%s ", "Rien");
     }
-    printf(")");
+    printf(" )");
 }
 
 /**
@@ -207,6 +208,7 @@ int manche() {
     affiche(ordinateur->nom, ordinateur->mains[joueur->nextIndiceMains]);
     affiche(joueur->nom, joueur->mains[joueur->nextIndiceMains]);
 
+
     /** Choix de relance des dés */
     int relance[NB_TIRAGES];
     char rep = ' ';
@@ -236,6 +238,11 @@ int manche() {
 
     /**  Calcul des points et détermination du gagnant */
     int calculGagnant = calculerPoints(identifie(joueur->mains[joueur->nextIndiceMains]), identifie(ordinateur->mains[joueur->nextIndiceMains]));
+
+    if(calculGagnant == 1) {
+        //TODO IA pour faire rejouer l'ordinateur
+
+    }
 
     switch (calculGagnant) {
         case 1:
@@ -285,6 +292,8 @@ int main(int argc, char *argv[]) {
     strcpy(ordinateur->nom, "Ordinateur");
 
     int scoreTotal = 0;
+
+    choisirStrategie();
 
     /** Jeu */
     srand(time(NULL));

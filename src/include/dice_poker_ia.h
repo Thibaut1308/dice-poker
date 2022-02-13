@@ -4,8 +4,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/** Entêtes IA */
-int *rejoue(int *hand, int hand_size);
+int strategie;
+
+int *rejouerIA(int *hand, int hand_size);
+
+/** Enumérations */
+typedef enum {
+    RIEN_REJOUER = 0,
+    TOUT_REJOUER = 1,
+    REJOUER_UN_DE_SUR_DEUX = 2,
+    REJOUER_ALEA = 3,
+    REJOUER_INTELLIGENT = 4
+} Strategie;
+
+
+void choisirStrategie() {
+    char rep = ' ';
+    while (rep != '0' && rep != '1' && rep != '2' && rep != '3' && rep != '4') {
+        printf("\nChoisir la strategie de l'ordinateur: \n");
+        printf(" 0: Rien rejouer\n");
+        printf(" 1: Tout rejouer\n");
+        printf(" 2: Rejouer un de sur deux\n");
+        printf(" 3: Rejouer Alea\n");
+        printf(" 4: IA\n");
+        scanf(" %c", &rep);
+        strategie = (int)rep;
+    }
+}
+
+int *rejouerIA(int *hand, int hand_size) {
+    return NULL;
+}
 
 /**
  * toutRejouer() - Rejoue toute une main d'ordinateur
@@ -78,5 +107,22 @@ void afficherMainARejouer(int *hand, int hand_size) {
     printf(" ]\n");
 }
 
+
+
+/** Méthode rejouer de l'IA */
+int *rejoue(int *hand, int hand_size) {
+    switch (strategie) {
+        case RIEN_REJOUER:
+            return rienRejouer(hand_size);
+        case TOUT_REJOUER:
+            return toutRejouer(hand_size);
+        case REJOUER_UN_DE_SUR_DEUX:
+            return rejouerUnDeSurDeux(hand_size);
+        case REJOUER_ALEA:
+            return rejouerAlea(hand_size);
+        default:
+            return rejouerIA(hand, hand_size);
+    }
+}
 
 #endif
