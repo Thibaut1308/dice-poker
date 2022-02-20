@@ -135,7 +135,6 @@ void affiche(char *name, const int hand[NB_TIRAGES_MAX]) {
             break;
     }
 
-    //TODO Pour les manches à 5 dés cas des  House ...
     if(rien) {
         printf("%s ", "Rien");
     }
@@ -156,10 +155,21 @@ int calculerPoints(const Identification* idJoueur, const Identification* idOrdin
     int i;
     int totalJoueur = 0;
     int totalOrdinateur = 0;
+    int straightOrdinateur;
+    int straightJoueur;
+
     for(i=2; i<NB_TIRAGES; i++) {
         totalJoueur += (int)(idJoueur[i].ffrequence*pow(2, i));
         totalOrdinateur += (int)(idOrdinateur[i].ffrequence*pow(2, i));
     }
+
+    /** Choix Five Straight = 10 points et Six Straight = 11 points pour valoir plus qu'un triple mais moins qu'un house  */
+
+    straightOrdinateur = 9 + estConsecutif(ordinateur->mains[ordinateur->nextIndiceMains]);
+    straightJoueur = 9 + estConsecutif(joueur->mains[joueur->nextIndiceMains]);
+
+    if(straightJoueur != 9) totalJoueur += straightJoueur;
+    if(straightOrdinateur != 9) totalOrdinateur += straightOrdinateur;
 
     if(totalJoueur < totalOrdinateur) {
         return -1;
