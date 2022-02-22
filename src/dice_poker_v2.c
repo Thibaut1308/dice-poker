@@ -251,7 +251,6 @@ int manche() {
     int calculGagnant = calculerPoints(identifie(joueur->mains[joueur->nextIndiceMains]), identifie(ordinateur->mains[joueur->nextIndiceMains]));
 
     if(calculGagnant == 1) {
-        //TODO IA pour faire rejouer l'ordinateur
         printf("\nL'ordinateur rejoue les des suivants: ");
         int *desARejouer = rejoue(ordinateur->mains[ordinateur->nextIndiceMains], NB_TIRAGES);
         afficherMainARejouer(desARejouer, NB_TIRAGES);

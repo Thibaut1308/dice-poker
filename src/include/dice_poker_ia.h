@@ -34,9 +34,7 @@ void choisirStrategie() {
     }
 }
 
-//TODO Rejouer IA en prenant en compte la main du joueur.
-//TODO en prenant en compte les faces
-//TODO en prenant en compte les straight
+
 /**
  * rejouerIA() - Rejoue les dés non compris dans des paires , triples ...
  * @hand_size Taille de la main à rejouer
