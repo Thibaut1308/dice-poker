@@ -46,20 +46,8 @@ int *rejouerIA(int *hand, int hand_size) {
     id = identifie(hand);
     int i;
     int j;
-    int ffrequence;
     int facesPresentes[NB_FACES];
     int indiceFacesPresentes = 0;
-
-    for(i=2;i<NB_TIRAGES;i++){
-        ffrequence = id[i].ffrequence;
-        if(ffrequence != 0){
-            for(j=0; j<id[i].lfaces.indiceDernierElement; j++) {
-                facesPresentes[indiceFacesPresentes] = id[i].lfaces.faces[j];
-                indiceFacesPresentes++;
-            }
-        }
-    }
-
     int *retour;
     retour = malloc(sizeof (int) * hand_size);
 
@@ -67,10 +55,25 @@ int *rejouerIA(int *hand, int hand_size) {
     for(i=0; i<hand_size; i++) {
         retour[i] = 1;
     }
-
+    // On initialise le tableau de facesPrésentes à 0
+    for(i = 0; i<NB_FACES; i++) {
+        facesPresentes[i] = 0;
+    }
     // On retire ceux dont les faces sont présentes dans facesPrésentes
+    for(i = 2;i < NB_TIRAGES + 1; i++) {
+        /** Initialisation des fréquences de fréquences*/
+        if(id[i].ffrequence != 0) {
+            for(j = 0; j<NB_FACES; j++) {
+                if(id[i].lfaces.faces[j] != 0) {
+                    facesPresentes[indiceFacesPresentes] = id[i].lfaces.faces[j];
+                    indiceFacesPresentes++;
+                }
+            }
+        }
+    }
+
     for(i=0; i<hand_size; i++) {
-        for(j=0; j<NB_FACES; j++) {
+        for(j=0; j<indiceFacesPresentes; j++) {
             if(facesPresentes[j] == hand[i]) {
                 retour[i] = 0;
             }
